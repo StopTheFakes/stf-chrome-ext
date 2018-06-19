@@ -8,13 +8,15 @@
 		"url": "git@localhost"
 	},
 	"scripts": {
-		"dev": "NODE_ENV=development webpack",
-		"prod": "NODE_ENV=production webpack"
+		"dev": "NODE_ENV=development webpack --progress",
+		"prod": "NODE_ENV=production webpack --progress"
 	},
 	"dependencies": {
 		"react": "^16.4.1",
 		"react-dom": "^16.4.1",
-		"prop-types": "^15.6.1",
+		"react-redux": "^5.0.7",
+		"redux": "^4.0.0",
+		"prop-types": "^15.6.2",
 		"webpack": "^4.12.0",
 		"babel-core": "^6.26.3",
 		"babel-loader": "^7.1.4",
@@ -28,7 +30,10 @@
 		"stylus": "^0.54.5",
 		"uglifyjs-webpack-plugin": "^1.2.0",
 		"@material-ui/core": "^1.2.1",
-		"@material-ui/icons": "^1.1.0"
+		"@material-ui/icons": "^1.1.0",
+		"query-string": "^6.1.0",
+		"moment": "^2.22.2",
+		"classnames": "^2.2.6"
 	},
 	"license": "MIT",
 	"devDependencies": {
