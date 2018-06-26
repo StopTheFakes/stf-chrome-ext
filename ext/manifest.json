@@ -2,7 +2,7 @@
 	"name": "STF",
 	"version": "0.1",
 	"description": "STF extension",
-	"permissions": ["tabs", "<all_urls>"],
+	"permissions": ["tabs", "<all_urls>", "unlimitedStorage", "storage"],
 	"browser_action": {
 		"default_title": "STF",
 		"default_icon": "icon.png",

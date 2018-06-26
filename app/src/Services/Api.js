@@ -1,8 +1,18 @@
 import * as qs from 'query-string';
 
+import { setToken } from './Auth';
+
 const BASE_URL = 'http://stf.glissmedia.ru/api/';
 
 /* global fetch */
+
+const process = resp => {
+	if (resp.status === 401) {
+		setToken(null);
+		return Promise.resolve({});
+	}
+	return resp.json();
+};
 
 const get = (url, params = null, token = null) =>
 	fetch(`${BASE_URL}${url}?${qs.stringify(params || {})}`, {
@@ -12,7 +22,7 @@ const get = (url, params = null, token = null) =>
 			...(token ? {'Authorization': `Bearer ${token}`} : {})
 		}
 	})
-		.then(resp => resp.json());
+		.then(process);
 
 const post = (url, data = {}, params = {}, token = null, method = 'POST') => {
 	let file = false;
@@ -40,18 +50,10 @@ const post = (url, data = {}, params = {}, token = null, method = 'POST') => {
 		},
 		body: file ? formData : JSON.stringify(data)
 	})
-		.then(resp => resp.json());
+		.then(process);
 };
 
-const del = (url, data = {}, params = {}, token = null) => post(url, data, params, token, 'DELETE');
-const put = (url, data = {}, params = {}, token = null) => post(url, data, params, token, 'PUT');
-
-
 export const login = (email, password) => post('login', {email, password});
-
 export const takenApplications = token => get('take', null, token);
-
-export const allApplications = token => get('request', null, token);
-
-
 export const application = (id, token) => get(`request/${id}`, null, token);
+export const sendSignal = (id, data, token) => post(`request/${id}`, data, {}, token);

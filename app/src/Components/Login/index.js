@@ -29,6 +29,9 @@ const styles = () => ({
 });
 
 
+const openLink = e => chrome.tabs.create({url: e.target.href});
+
+
 class Login extends Component {
 	constructor(props, context){
 		super(props, context);
@@ -64,6 +67,13 @@ class Login extends Component {
 	}
 
 
+	handleKeyPress(e) {
+		if (e.charCode === 13) {
+			this.handleLogin();
+		}
+	}
+
+
 	render() {
 		let { classes } = this.props;
 		let { email, emailError, password, passwordError } = this.state;
@@ -77,6 +87,7 @@ class Login extends Component {
 						className={classes.input}
 						value={email}
 						onChange={e => this.setState({email: e.target.value})}
+						onKeyPress={this.handleKeyPress.bind(this)}
 						helperText={emailError}
 						error={!!emailError}
 					/>
@@ -87,9 +98,15 @@ class Login extends Component {
 						className={classes.input}
 						value={password}
 						onChange={e => this.setState({password: e.target.value})}
+						onKeyPress={this.handleKeyPress.bind(this)}
 						helperText={passwordError}
 						error={!!passwordError}
 					/>
+					<div>
+						<a href="http://stf.glissmedia.ru/" onClick={openLink}>Register</a>
+						<span> / </span>
+						<a href="http://stf.glissmedia.ru/" onClick={openLink}>Remember password</a>
+					</div>
 				</CardContent>
 				<CardActions className={classes.actions}>
 					<Button

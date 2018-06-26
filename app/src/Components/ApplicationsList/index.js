@@ -9,8 +9,6 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import ImageIcon from '@material-ui/icons/Image';
 
 import OuterComponent from 'Components/Outer';
 
@@ -19,6 +17,11 @@ import { setTakenRequests, setHeading, setMode, setCurrentItem } from 'Services/
 
 
 const styles = () => ({});
+
+const handleSelectItem = item => {
+	setMode('application-view');
+	setCurrentItem(item);
+};
 
 
 class ApplicationsList extends Component {
@@ -31,27 +34,20 @@ class ApplicationsList extends Component {
 
 
 	componentDidMount() {
-		takenApplications(this.props.token).then(data => setTakenRequests(data.data));
+		let { token } = this.props;
+		takenApplications(token).then(data => setTakenRequests(data.data));
 		setHeading('Requests list');
-	}
-
-
-	handleSelectItem(item) {
-		setMode('application-view');
-		setCurrentItem(item);
 	}
 
 
 	render() {
 		let { takenRequests } = this.props;
+		takenRequests = takenRequests || [];
 		return (
 			<OuterComponent>
 				<List component="nav">
 					{takenRequests.map(item =>
-						<ListItem button onClick={() => this.handleSelectItem(item)}>
-							<Avatar>
-								<ImageIcon />
-							</Avatar>
+						<ListItem button onClick={() => handleSelectItem(item)}>
 							<ListItemText
 								primary={item.title}
 								secondary={`Cost: ${item.screenshot_cost} (Jan 9, 2014)`}

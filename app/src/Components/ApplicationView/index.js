@@ -8,50 +8,47 @@ import { withStyles } from '@material-ui/core/styles';
 
 import OuterComponent from 'Components/Outer';
 
-import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
-import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import red from '@material-ui/core/colors/red';
-import classnames from 'classnames';
+import SendIcon from '@material-ui/icons/Send';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import CheckBox from '@material-ui/icons/CheckBox';
+import Delete from '@material-ui/icons/Delete';
+import ScreenShare from '@material-ui/icons/ScreenShare';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import TextField from '@material-ui/core/TextField';
 
 import { setHeading } from 'Services/Store';
-import { application } from 'Services/Api';
+import { application, sendSignal } from 'Services/Api';
 
 
 const styles = theme => ({
 	card: {
 		maxWidth: 400,
 	},
-	media: {
-		height: 0,
-		paddingTop: '56.25%', // 16:9
-	},
 	actions: {
 		display: 'flex',
 	},
-	expand: {
-		transform: 'rotate(0deg)',
-		transition: theme.transitions.create('transform', {
-			duration: theme.transitions.duration.shortest,
-		}),
-		marginLeft: 'auto',
-	},
-	expandOpen: {
-		transform: 'rotate(180deg)',
-	},
 	avatar: {
-		backgroundColor: red[500],
+		width: 50
 	},
+	text: {
+		marginBottom: 20
+	},
+	icon: {
+		color: 'rgba(255, 255, 255, 0.8)',
+	},
+	input: {
+		color: 'rgba(255, 255, 255, 1)',
+	}
 });
 
 
@@ -61,97 +58,184 @@ class ApplicationView extends Component {
 		super(props, context);
 		this.state = {
 			item: null,
-			expanded: false
+			screenshots: []
 		};
 	}
-// {"id":1,"user_id":"1","title":"Testing Request (editable)","type":"online","country_id":"1","category":"Automobile","object":[4,1,2],"description":"Sometimes you may need to create more advanced where clauses such as \"where exists\" clauses or nested parameter groupings. The Laravel query builder can handle these as well. To get started, let's look at an example of grouping constraints within parenthesis","picture_method":"0","picture_cost":"74.61","video_method":"0","video_cost":"42.43","accepted":["wholesale","stationary_who","distance_who","catalogue","corporate","personal"],"usage_rights":"Adidas","rights":null,"recommendation":"Sometimes you may need to create more advanced where clauses such as \"where exists\" clauses or nested parameter groupings.","confirmation":"1","status":"1","created_at":"2018-02-27 10:14:39","updated_at":"2018-02-27 14:08:37","screenshot_method":"1","screenshot_cost":"28.15","current":"0","city_id":null}
+
 
 	componentDidMount() {
+		let { currentItem, token } = this.props;
 		setHeading('Loading...');
-		application(this.props.currentItem.id, this.props.token)
+		application(currentItem.id, token)
 			.then(item => {
 				this.setState({ item });
 				setHeading(item.title);
+				chrome.storage.local.get(['screenshots'], result => {
+					let { screenshots = {} } = result;
+					this.setState({ screenshots: (screenshots[item.id] || []).filter(i => !!i) });
+				});
 			});
+	}
+
+
+	makeScreenshot() {
+		let { screenshots } = this.state;
+		chrome.tabs.captureVisibleTab(null, {}, img => {
+			screenshots.push({ id: screenshots.length, img, desc: '' });
+			this.updateScreenshots(screenshots);
+		});
+	}
+
+
+	setScreenDesc(id, desc) {
+		let { screenshots } = this.state;
+		if (screenshots[id]) {
+			screenshots[id].desc = desc;
+			this.updateScreenshots(screenshots);
+		}
+	}
+
+
+	removeScreen(id) {
+		let { screenshots } = this.state;
+		screenshots.splice(id, 1);
+		screenshots = screenshots.map((s, i) => ({...s, id: i}));
+		this.updateScreenshots(screenshots);
+	}
+
+
+	updateScreenshots(newScreenshots) {
+		let { item } = this.state;
+		this.setState({screenshots: [...newScreenshots]});
+		chrome.storage.local.get(['screenshots'], result => {
+			let { screenshots = {} } = result;
+			console.log(screenshots);
+			screenshots[item.id] = newScreenshots;
+			chrome.storage.local.set({ screenshots });
+		});
+	}
+
+
+	sendSignal() {
+		let { token } = this.props;
+		let { item, screenshots } = this.state;
+		let data = {
+			description: null,
+			url: null,
+			email: null,
+			email_title: null,
+			address: null,
+			image: screenshots.map(i => ({img: i.img, desc: i.desc})),
+			video: null,
+			status: null
+		};
+		sendSignal(item.id, data, token)
+			.then(data => console.log(data));
 	}
 
 
 	render() {
 		let { classes } = this.props;
+		let { item, screenshots } = this.state;
+		item = {
+			country_id: 0,
+			city_id: 0,
+			category: '',
+			accepted: [],
+			usage_rights: '',
+			screenshot_cost: '',
+			description: '',
+			recommendation: '',
+			...(item || {})
+		};
 		return (
 			<OuterComponent>
-					<CardHeader
-						avatar={
-							<Avatar aria-label="Recipe" className={classes.avatar}>
-								R
-							</Avatar>
-						}
-						action={
-							<IconButton>
-								<MoreVertIcon />
-							</IconButton>
-						}
-						title="Shrimp and Chorizo Paella"
-						subheader="September 14, 2016"
-					/>
-					<CardMedia
-						className={classes.media}
-						image="https://material-ui.com/static/images/cards/paella.jpg"
-						title="Contemplative Reptile"
-					/>
-					<CardContent>
-						<Typography component="p">
-							This impressive paella is a perfect party dish and a fun meal to cook together with
-							your guests. Add 1 cup of frozen peas along with the mussels, if you like.
-						</Typography>
-					</CardContent>
-					<CardActions className={classes.actions} disableActionSpacing>
-						<IconButton aria-label="Add to favorites">
-							<FavoriteIcon />
-						</IconButton>
-						<IconButton aria-label="Share">
-							<ShareIcon />
-						</IconButton>
-						<IconButton
-							className={classnames(classes.expand, {
-								[classes.expandOpen]: this.state.expanded,
-							})}
-							onClick={() => this.setState({ expanded: !this.state.expanded })}
-							aria-expanded={this.state.expanded}
-							aria-label="Show more"
-						>
-							<ExpandMoreIcon />
-						</IconButton>
-					</CardActions>
-					<Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-						<CardContent>
-							<Typography paragraph variant="body2">
-								Method:
-							</Typography>
-							<Typography paragraph>
-								Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-								minutes.
-							</Typography>
-							<Typography paragraph>
-								Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
-								heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
-								browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving
-								chicken and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion,
-								salt and pepper, and cook, stirring often until thickened and fragrant, about 10
-								minutes. Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-							</Typography>
-							<Typography paragraph>
-								Add rice and stir very gently to distribute. Top with artichokes and peppers, and
-								cook without stirring, until most of the liquid is absorbed, 15 to 18 minutes.
-								Reduce heat to medium-low, add reserved shrimp and mussels, tucking them down into
-								the rice, and cook again without stirring, until mussels have opened and rice is
-								just tender, 5 to 7 minutes more. (Discard any mussels that don’t open.)
-							</Typography>
-							<Typography>
-								Set aside off of the heat to let rest for 10 minutes, and then serve.
-							</Typography>
-						</CardContent>
-					</Collapse>
+				<CardHeader
+					avatar={
+						<img src="http://stf.glissmedia.ru/img/icons/active-circle.svg" className={classes.avatar} alt=""/>
+					}
+					title={item.title}
+					subheader={`Country: ${item.country_id}${item.city_id ? `, ${item.city_id}` : ''}`}
+				/>
+
+				<CardContent>
+
+					<List component="nav">
+						<ListItem>
+							<ListItemIcon>
+								<CheckBox />
+							</ListItemIcon>
+							<ListItemText inset primary={`Topic: ${item.category}`} />
+						</ListItem>
+						<ListItem>
+							<ListItemIcon>
+								<CheckBox />
+							</ListItemIcon>
+							<ListItemText inset primary={`Accepted: ${item.accepted.join(', ')}`} />
+						</ListItem>
+						<ListItem>
+							<ListItemIcon>
+								<CheckBox />
+							</ListItemIcon>
+							<ListItemText inset primary={`Usage rights: ${item.usage_rights}`} />
+						</ListItem>
+						<ListItem>
+							<ListItemIcon>
+								<CheckBox />
+							</ListItemIcon>
+							<ListItemText inset primary={`Cost: ${item.screenshot_cost} STF`} />
+						</ListItem>
+					</List>
+
+					<Typography variant="subheading">Description</Typography>
+					<Typography component="p" className={classes.text}>{item.description}</Typography>
+
+					<Typography variant="subheading">Tips</Typography>
+					<Typography component="p" className={classes.text}>{item.recommendation}</Typography>
+
+					<GridList cols="1">
+						{screenshots.map(s =>
+							<GridListTile key={s.id} cols="1">
+								<img src={s.img} />
+								<GridListTileBar
+									title={
+										<TextField
+											fullWidth
+											label="Description"
+											InputProps={{
+												classes: {
+													root: classes.input,
+													input: classes.input,
+												},
+											}}
+											InputLabelProps={{
+												className: classes.input,
+											}}
+											value={s.desc}
+											onChange={e => this.setScreenDesc(s.id, e.target.value)}
+										/>
+									}
+									actionIcon={
+										<IconButton className={classes.icon} onClick={() => this.removeScreen(s.id)}>
+											<Delete />
+										</IconButton>
+									}
+								/>
+							</GridListTile>
+						)}
+					</GridList>
+
+				</CardContent>
+
+				<CardActions className={classes.actions} disableActionSpacing>
+					<IconButton aria-label="Make screenshot" onClick={this.makeScreenshot.bind(this)}>
+						<ScreenShare />
+					</IconButton>
+					<IconButton aria-label="Make screenshot" onClick={this.sendSignal.bind(this)}>
+						<SendIcon />
+					</IconButton>
+				</CardActions>
+
 			</OuterComponent>
 		);
 	}
