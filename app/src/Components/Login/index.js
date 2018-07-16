@@ -1,32 +1,13 @@
 
 import React, { Component } from 'react';
 
-import { withStyles } from '@material-ui/core/styles';
-
-import Card        from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Typography  from '@material-ui/core/Typography';
-import Button      from '@material-ui/core/Button';
-import TextField   from '@material-ui/core/TextField';
 
 import { login } from 'Services/Api';
 
 import { setToken } from 'Services/Auth';
 
-
-const styles = () => ({
-	card: {
-		maxWidth: 400,
-		minWidth: 300,
-	},
-	input: {
-		marginBottom: 15
-	},
-	actions: {
-		paddingBottom: 20
-	}
-});
+import '../common.styl';
+import './index.styl';
 
 
 const openLink = e => chrome.tabs.create({url: e.target.href});
@@ -58,7 +39,7 @@ class Login extends Component {
 		}
 		this.setState({ emailError: null, passwordError: null });
 		login(email, password).then(data => {
-			if (data.success && data.token) {
+			if (data.token) {
 				setToken(data.token);
 			} else {
 				this.setState({ passwordError: 'Пользователь не найден' });
@@ -75,51 +56,41 @@ class Login extends Component {
 
 
 	render() {
-		let { classes } = this.props;
 		let { email, emailError, password, passwordError } = this.state;
 		return (
-			<Card className={classes.card}>
-				<CardContent>
-					<Typography color="textSecondary" align="center" variant="title">Login</Typography>
-					<TextField
-						fullWidth
-						label="E-mail"
-						className={classes.input}
-						value={email}
-						onChange={e => this.setState({email: e.target.value})}
-						onKeyPress={this.handleKeyPress.bind(this)}
-						helperText={emailError}
-						error={!!emailError}
-					/>
-					<TextField
-						fullWidth
-						label="Password"
-						type="password"
-						className={classes.input}
-						value={password}
-						onChange={e => this.setState({password: e.target.value})}
-						onKeyPress={this.handleKeyPress.bind(this)}
-						helperText={passwordError}
-						error={!!passwordError}
-					/>
-					<div>
-						<a href="http://stf.glissmedia.ru/" onClick={openLink}>Register</a>
-						<span> / </span>
-						<a href="http://stf.glissmedia.ru/" onClick={openLink}>Remember password</a>
-					</div>
-				</CardContent>
-				<CardActions className={classes.actions}>
-					<Button
-						fullWidth
-						color="primary"
-						variant="contained"
-						onClick={this.handleLogin.bind(this)}
-					>Login</Button>
-				</CardActions>
-			</Card>
+			<div className="login__outer">
+				<div className="login__form">
+					<label className={`login__input email ${emailError ? 'error' : ''}`}>
+						<input
+							type="text"
+							placeholder="E-mail"
+							value={email}
+							onChange={e => this.setState({email: e.target.value})}
+							onKeyPress={this.handleKeyPress.bind(this)}
+						/>
+						{!!emailError && <span className="login__input-err-box">{emailError}</span>}
+					</label>
+					<label className={`login__input password ${passwordError ? 'error' : ''}`}>
+						<input
+							type="password"
+							placeholder="Password"
+							value={password}
+							onChange={e => this.setState({password: e.target.value})}
+							onKeyPress={this.handleKeyPress.bind(this)}
+						/>
+						{!!passwordError && <span className="login__input-err-box">{passwordError}</span>}
+					</label>
+				</div>
+				<button className="login__button" onClick={this.handleLogin.bind(this)}>Sign in</button>
+				<div className="login__links">
+					<a href="http://stf.glissmedia.ru/" onClick={openLink}>Register</a>
+					<span> / </span>
+					<a href="http://stf.glissmedia.ru/" onClick={openLink}>Remember password</a>
+				</div>
+			</div>
 		);
 	}
 }
 
 
-export default withStyles(styles)(Login);
+export default Login;

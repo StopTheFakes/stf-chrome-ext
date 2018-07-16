@@ -4,47 +4,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ArrowBack from '@material-ui/icons/ArrowBack';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 
 import { setToken } from 'Services/Auth';
 
 import { setMode, setCurrentItem } from 'Services/Store';
 
-
-const styles = () => ({
-	card: {
-		maxWidth: 500,
-		minWidth: 500,
-		minHeight: 300,
-		maxHeight: 600,
-		overflow: 'auto'
-	},
-	root: {
-		flexGrow: 1,
-	},
-	flex: {
-		flex: 1,
-	},
-	menuButton: {
-		marginLeft: -12,
-		marginRight: 20,
-	},
-	contentOuter: {
-		paddingTop: 70
-	}
-});
+import './index.styl';
 
 
 class ApplicationsList extends Component {
@@ -57,11 +22,21 @@ class ApplicationsList extends Component {
 	}
 
 
+	componentDidMount() {
+		chrome.storage.local.get(['currentItem'], result => {
+			let { currentItem } = result;
+			setMode(currentItem ? 'application-view' : null);
+			setCurrentItem(currentItem);
+		});
+	}
+
+
 	handleIconCLick(target) {
 		let { currentItem } = this.props;
 		if (currentItem) {
 			setMode(null);
 			setCurrentItem(null);
+			chrome.storage.local.set({ currentItem: null });
 		} else {
 			this.setState({anchorEl: target});
 		}
@@ -69,7 +44,13 @@ class ApplicationsList extends Component {
 
 
 	render() {
-		let { classes, children, heading, currentItem } = this.props;
+		let { children } = this.props;
+		return (
+			<div className="main-outer">
+				{children}
+			</div>
+		);
+		/*let { classes, children, heading, currentItem } = this.props;
 		let { anchorEl } = this.state;
 		return (
 			<Card className={classes.card}>
@@ -102,6 +83,7 @@ class ApplicationsList extends Component {
 							>
 								<MenuItem onClick={() => this.setState({anchorEl: null})}>Requests list</MenuItem>
 								<MenuItem onClick={() => setToken(null)}>Logout</MenuItem>
+								<MenuItem onClick={() => chrome.tabs.create({url: 'http://stf.glissmedia.ru/'})}>View Requests</MenuItem>
 							</Menu>
 						</Toolbar>
 					</AppBar>
@@ -110,7 +92,7 @@ class ApplicationsList extends Component {
 					{children}
 				</CardContent>
 			</Card>
-		);
+		);*/
 	}
 }
 
@@ -126,4 +108,4 @@ export default connect(state => ({
 	token: state.authToken,
 	heading: state.heading,
 	currentItem: state.currentItem,
-}))(withStyles(styles)(ApplicationsList));
+}))(ApplicationsList);

@@ -3,16 +3,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 
 import LoginComponent from 'Components/Login';
 import ApplicationsListComponent from 'Components/ApplicationsList';
 import ApplicationViewComponent from 'Components/ApplicationView';
 
 import './index.styl';
-
-
-const styles = () => ({});
 
 
 class App extends Component {
@@ -30,11 +26,11 @@ class App extends Component {
 
 
 	render() {
-		let p = this.props;
-		if (!p.token) {
+		let { token, mode } = this.props;
+		if (!token) {
 			return <LoginComponent />;
 		}
-		switch (p.mode) {
+		switch (mode) {
 			case 'application-view': return <ApplicationViewComponent />;
 		}
 		return <ApplicationsListComponent />;
@@ -51,4 +47,4 @@ App.propTypes = {
 export default connect(state => ({
 	token: state.authToken,
 	mode: state.mode,
-}))(withStyles(styles)(App));
+}))(App);

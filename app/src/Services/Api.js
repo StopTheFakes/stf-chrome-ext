@@ -2,7 +2,7 @@ import * as qs from 'query-string';
 
 import { setToken } from './Auth';
 
-const BASE_URL = 'http://stf.glissmedia.ru/api/';
+const BASE_URL = 'http://stf.glissmedia.ru/api/v1/';
 
 /* global fetch */
 
@@ -54,6 +54,6 @@ const post = (url, data = {}, params = {}, token = null, method = 'POST') => {
 };
 
 export const login = (email, password) => post('login', {email, password});
-export const takenApplications = token => get('take', null, token);
-export const application = (id, token) => get(`request/${id}`, null, token);
+export const takenApplications = token => get('request/taken', null, token);
+export const application = (id, token) => get(`request/${id}/taken`, null, token);
 export const sendSignal = (id, data, token) => post(`request/${id}`, data, {}, token);

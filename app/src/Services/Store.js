@@ -5,9 +5,8 @@ import { Provider } from 'react-redux';
 
 const SET_AUTH_TOKEN = 1;
 const SET_TAKEN_REQUESTS = 2;
-const SET_HEADING = 3;
-const SET_MODE = 4;
-const SET_CURRENT_ITEM = 5;
+const SET_MODE = 3;
+const SET_CURRENT_ITEM = 4;
 
 
 const reducer = (state, action) => {
@@ -25,8 +24,6 @@ const reducer = (state, action) => {
 			return {...state, authToken: action.token};
 		case SET_TAKEN_REQUESTS:
 			return {...state, takenRequests: action.list};
-		case SET_HEADING:
-			return {...state, heading: action.heading};
 		case SET_MODE:
 			return {...state, mode: action.mode};
 		case SET_CURRENT_ITEM:
@@ -40,9 +37,6 @@ export const setAuthToken = token => service.Store.dispatch({ type: SET_AUTH_TOK
 
 
 export const setTakenRequests = list => service.Store.dispatch({ type: SET_TAKEN_REQUESTS, list });
-
-
-export const setHeading = heading => service.Store.dispatch({ type: SET_HEADING, heading });
 
 
 export const setMode = mode => service.Store.dispatch({ type: SET_MODE, mode });

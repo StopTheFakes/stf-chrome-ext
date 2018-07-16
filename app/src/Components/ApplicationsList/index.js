@@ -4,23 +4,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 
 import OuterComponent from 'Components/Outer';
 
 import { takenApplications } from 'Services/Api';
-import { setTakenRequests, setHeading, setMode, setCurrentItem } from 'Services/Store';
+import { setTakenRequests, setMode, setCurrentItem } from 'Services/Store';
 
+import './index.styl';
 
-const styles = () => ({});
 
 const handleSelectItem = item => {
 	setMode('application-view');
 	setCurrentItem(item);
+	chrome.storage.local.set({ currentItem: item });
 };
 
 
@@ -35,8 +31,10 @@ class ApplicationsList extends Component {
 
 	componentDidMount() {
 		let { token } = this.props;
-		takenApplications(token).then(data => setTakenRequests(data.data));
-		setHeading('Requests list');
+		takenApplications(token).then(data => {
+			console.log(data);
+			setTakenRequests(data.data);
+		});
 	}
 
 
@@ -45,16 +43,17 @@ class ApplicationsList extends Component {
 		takenRequests = takenRequests || [];
 		return (
 			<OuterComponent>
-				<List component="nav">
-					{takenRequests.map(item =>
-						<ListItem button onClick={() => handleSelectItem(item)}>
-							<ListItemText
-								primary={item.title}
-								secondary={`Cost: ${item.screenshot_cost} (Jan 9, 2014)`}
-							/>
-						</ListItem>
-					)}
-				</List>
+				<div className="app-item">
+					<div className="app-item__head">
+						<div className="app-item__head-city">USA, 4 cities</div>
+						<div className="app-item__head-date">22/11/2017</div>
+					</div>
+					<div className="app-item__body">
+						<div className="app-item__body-head">Illegal use of Alex Smith's copyright material (pictures, videos, audios, etc.)</div>
+						<div className="app-item__body-time">24:45</div>
+						<button className="app-item__body-send-signal">Send signal</button>
+					</div>
+				</div>
 			</OuterComponent>
 		);
 	}
@@ -70,4 +69,4 @@ ApplicationsList.propTypes = {
 export default connect(state => ({
 	token: state.authToken,
 	takenRequests: state.takenRequests
-}))(withStyles(styles)(ApplicationsList));
+}))(ApplicationsList);

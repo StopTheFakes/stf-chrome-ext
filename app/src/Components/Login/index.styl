@@ -1,0 +1,74 @@
+.login
+	&__outer
+		background url('../img/bg1.png') 50% 20px no-repeat
+		padding-top 190px
+		background-size 200px auto
+		padding-bottom 30px
+	&__form
+		margin 0 20px
+		background #fff
+		border-radius 7px
+		padding 20px
+	&__input
+		display block
+		position relative
+		&-err-box
+			position: absolute;
+			background: #191919;
+			border-top: 3px solid #ff0030;
+			bottom: -26px;
+			right: 5px;
+			color: #fff;
+			font-size: 14px;
+			padding: 7px 10px;
+			z-index: 1;
+			&:after
+				content: "";
+				position: absolute;
+				border: 5px solid transparent;
+				border-bottom-color: #ff0030;
+				top: -13px;
+				right: 19px;
+		input
+			display block
+			width 100%
+			border none
+			height 40px
+			padding 0 20px
+			border-radius 5px
+			outline none
+		&.email
+			input
+				margin-bottom 20px
+				background #f7f7f7 url('../img/ico1.png') calc(100% - 20px) 50% no-repeat
+				background-size: 15px auto;
+			&.error
+				input
+					background #f7f7f7 url('../img/ico3.png') calc(100% - 20px) 50% no-repeat
+					background-size: 18px auto;
+		&.password
+			input
+				background #f7f7f7 url('../img/ico2.png') calc(100% - 20px) 50% no-repeat
+				background-size: 17px auto;
+			&.error
+				input
+					background #f7f7f7 url('../img/ico3.png') calc(100% - 20px) 50% no-repeat
+					background-size: 18px auto;
+	&__button
+		display: block;
+		border: none;
+		background: #42d25b;
+		border-radius: 5px;
+		color: #fff;
+		text-align: center;
+		width: calc(100% - 40px);
+		margin: 20px auto 0;
+		height: 40px;
+		font-size: 17px;
+		cursor: pointer;
+	&__links
+		text-align: center;
+		padding-top: 15px;
+		color: #fff;
+		a
+			color: #fff;

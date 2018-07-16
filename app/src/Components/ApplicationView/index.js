@@ -58,23 +58,33 @@ class ApplicationView extends Component {
 		super(props, context);
 		this.state = {
 			item: null,
+			loaded: false,
 			screenshots: []
 		};
 	}
 
 
 	componentDidMount() {
-		let { currentItem, token } = this.props;
 		setHeading('Loading...');
-		application(currentItem.id, token)
-			.then(item => {
-				this.setState({ item });
-				setHeading(item.title);
-				chrome.storage.local.get(['screenshots'], result => {
-					let { screenshots = {} } = result;
-					this.setState({ screenshots: (screenshots[item.id] || []).filter(i => !!i) });
+		this.setState({loaded: false});
+	}
+
+
+	componentDidUpdate() {
+		let { currentItem, token } = this.props;
+		let { item, loaded } = this.state;
+		if (currentItem && !item && !loaded) {
+			this.setState({loaded: true});
+			application(currentItem.id, token)
+				.then(item => {
+					this.setState({ item, loaded: false });
+					setHeading(item.title);
+					chrome.storage.local.get(['screenshots'], result => {
+						let { screenshots = {} } = result;
+						this.setState({ screenshots: (screenshots[item.id] || []).filter(i => !!i) });
+					});
 				});
-			});
+		}
 	}
 
 
@@ -109,7 +119,6 @@ class ApplicationView extends Component {
 		this.setState({screenshots: [...newScreenshots]});
 		chrome.storage.local.get(['screenshots'], result => {
 			let { screenshots = {} } = result;
-			console.log(screenshots);
 			screenshots[item.id] = newScreenshots;
 			chrome.storage.local.set({ screenshots });
 		});

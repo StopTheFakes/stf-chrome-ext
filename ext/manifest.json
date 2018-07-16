@@ -1,12 +1,38 @@
 {
 	"name": "STF",
-	"version": "0.1",
+	"version": "0.1.1",
 	"description": "STF extension",
-	"permissions": ["tabs", "<all_urls>", "unlimitedStorage", "storage"],
+	"permissions": [
+		"tabs",
+		"<all_urls>",
+		"unlimitedStorage",
+		"storage",
+		"activeTab"
+	],
 	"browser_action": {
 		"default_title": "STF",
 		"default_icon": "icon.png",
 		"default_popup": "index.html"
+	},
+	"content_scripts": [
+		{
+			"matches": ["*://*/*"],
+			"css": ["content.css"],
+			"js": ["content.js"]
+		}
+	],
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": false
+	},
+	"commands": {
+		"make-screenshot": {
+			"suggested_key": {
+				"default": "Ctrl+Shift+S",
+				"mac": "Command+Shift+S"
+			},
+			"description": "Make screenshot"
+		}
 	},
 	"manifest_version": 2,
 	"content_security_policy": "script-src 'self'; object-src 'self'"
