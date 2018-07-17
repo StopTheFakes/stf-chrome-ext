@@ -1,0 +1,166 @@
+.signal-outer
+	background #fff
+	&__screenshots
+		min-height 100px
+		padding 15px
+		&-list
+			display flex
+			flex-wrap wrap
+	&__screenshot
+		&-small
+			width 128px
+			height 128px
+			background-size cover
+			background-position 50% 50%
+			border 1px solid #61676b
+			border-radius 5px
+			cursor pointer
+			margin-bottom 20px
+			margin-right 18px
+			&:nth-child(3n)
+				margin-right 0
+		&-current
+			margin-bottom 20px
+			position relative
+			img
+				display block
+				width 100%
+			&-remove
+				position absolute
+				cursor pointer
+				background #ff1110 url('./2.jpg') 50% 50% no-repeat
+				width 40px
+				height 40px
+				border-radius 5px
+				bottom 10px
+				right 10px
+				z-index 1
+				border none
+				outline none
+				background-size 30px auto
+	&__send
+		padding 0 15px
+		margin-bottom 15px
+	&__send-button
+		display block
+		width 100%
+		border 1px solid #61676b
+		background #fff
+		height 35px
+		color #61676b
+		border-radius 5px
+		cursor pointer
+		font-size 15px
+		outline none
+		&.active
+			background #41d259
+			border none
+			color #fff
+	&__nav
+		padding 10px 15px
+		background #edf0f5
+		display flex
+		justify-content space-between
+		&-back
+			width 48%
+			cursor pointer
+			border 1px solid #61676b
+			background transparent
+			height 35px
+			border-radius 5px
+			font-size 14px
+			color #61676b
+			outline none
+		&-screenshot
+			width 48%
+			background #fe1212 url('./1.jpg') 50% 50% no-repeat
+			border none
+			outline none
+			border-radius 5px
+			cursor pointer
+			background-size 25px auto
+			&.inactive
+				background-color #fff
+				background-image url('./3.jpg')
+
+.send-signal
+	&__card
+		border-radius 10px
+		background #fff
+		box-shadow 0 0 20px rgba(0, 0, 0, .3)s
+		margin-bottom 20px
+		&.gray
+			background #edf0f5
+
+		&-head
+			background #edf0f5
+			border-radius 10px 10px 0 0
+			display flex
+			padding 10px 15px
+			&-back
+				color #5d6771
+				background url('./4.jpg') 0 50% no-repeat
+				padding 0 0 0 25px
+				background-size 17px auto
+				cursor pointer
+				font-size 14px
+		&-body
+			padding 20px 15px
+		&-label
+			display block
+			strong
+				font-weight 700
+				font-size 15px
+				display block
+				color #000
+				margin-bottom 10px
+			span
+				font-size 15px
+				display block
+				color #000
+				margin-bottom 10px
+		&-input
+			display block
+			background #f7f7f7
+			border-radius 5px
+			height 40px
+			width 100%
+			padding 0 20px
+			color #5d6771
+			border none
+			outline none
+			font-size 14px
+			&.email
+				background-image url('./5.jpg')
+				background-position 96% 50%
+				background-repeat no-repeat
+				background-size 20px auto
+		&-textarea
+			display block
+			background #f7f7f7
+			border-radius 5px
+			height 80px
+			width 100%
+			padding 10px 20px
+			color #5d6771
+			border none
+			outline none
+			font-size 14px
+			resize none
+		.gray &-input
+			background-color #fff
+	&__send-button
+		width 100%
+		cursor pointer
+		border 1px solid #61676b
+		background transparent
+		height 35px
+		border-radius 5px
+		font-size 14px
+		color #61676b
+		outline none
+		margin-top 15px
+		&.active
+			background #41d259
+			border none
+			color #fff

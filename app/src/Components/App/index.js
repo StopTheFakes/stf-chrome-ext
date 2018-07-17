@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import LoginComponent from 'Components/Login';
 import ApplicationsListComponent from 'Components/ApplicationsList';
 import ApplicationViewComponent from 'Components/ApplicationView';
+import MenuComponent from 'Components/Menu';
 
 import './index.styl';
 
@@ -30,8 +31,11 @@ class App extends Component {
 		if (!token) {
 			return <LoginComponent />;
 		}
+		console.log(mode);
 		switch (mode) {
 			case 'application-view': return <ApplicationViewComponent />;
+			case 'applications-list': return <ApplicationsListComponent />;
+			case 'menu': return <MenuComponent />;
 		}
 		return <ApplicationsListComponent />;
 	}
