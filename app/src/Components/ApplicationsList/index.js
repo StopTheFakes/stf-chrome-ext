@@ -32,20 +32,7 @@ class ApplicationsList extends Component {
 
 
 	componentDidMount() {
-		let { token } = this.props;
-		takenApplications(token).then(data => {
-			console.log(data);
-			setTakenRequests([
-				{
-					id: 1,
-					claim_id: 1,
-					requestor_id: 2,
-					title: 'Product1',
-					cost: 88.25,
-					created: '2018-06-09 14:32:28'
-				}
-			]);
-		});
+		takenApplications(this.props.token).then(data => setTakenRequests(data.data));
 	}
 
 
