@@ -34,6 +34,7 @@ class ApplicationsList extends Component {
 	componentDidMount() {
 		let { token } = this.props;
 		takenApplications(token).then(data => {
+			console.log(data);
 			setTakenRequests([
 				{
 					id: 1,

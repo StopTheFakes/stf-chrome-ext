@@ -1,0 +1,62 @@
+
+.stf-ext-screenshot-status {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 0;
+	z-index: 9999999;
+}
+.stf-ext-screenshot-status__border-top,
+.stf-ext-screenshot-status__border-right,
+.stf-ext-screenshot-status__border-bottom,
+.stf-ext-screenshot-status__border-left,
+.stf-ext-screenshot-status__message {
+	position: fixed;
+	z-index: 9999999;
+}
+.stf-ext-screenshot-status__border-top,
+.stf-ext-screenshot-status__border-bottom {
+	left: 0;
+	width: 100%;
+	height: 3px;
+}
+.stf-ext-screenshot-status__border-right,
+.stf-ext-screenshot-status__border-left {
+	top: 0;
+	width: 3px;
+	height: 100%;
+}
+.stf-ext-screenshot-status__border-top {
+	top: 0;
+}
+.stf-ext-screenshot-status__border-right {
+	right: 0;
+}
+.stf-ext-screenshot-status__border-bottom {
+	bottom: 0;
+}
+.stf-ext-screenshot-status__border-left {
+	left: 0;
+}
+.stf-ext-screenshot-status__message {
+	right: 0;
+	top: 0;
+	color: #fff;
+	font-size: 15px;
+	padding: 10px 20px;
+}
+.success .stf-ext-screenshot-status__border-top,
+.success .stf-ext-screenshot-status__border-right,
+.success .stf-ext-screenshot-status__border-bottom,
+.success .stf-ext-screenshot-status__border-left,
+.success .stf-ext-screenshot-status__message {
+	background: #008000;
+}
+.error .stf-ext-screenshot-status__border-top,
+.error .stf-ext-screenshot-status__border-right,
+.error .stf-ext-screenshot-status__border-bottom,
+.error .stf-ext-screenshot-status__border-left,
+.error .stf-ext-screenshot-status__message {
+	background: #C00;
+}
