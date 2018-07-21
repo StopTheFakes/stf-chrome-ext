@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
+import Countdown from 'react-countdown-now';
 
 import { connect } from 'react-redux';
 
@@ -16,20 +17,14 @@ import './index.styl';
 
 
 const handleSelectItem = item => {
-	setMode('application-view');
-	setCurrentItem(item);
-	chrome.storage.local.set({ currentItem: item });
+	chrome.storage.local.set({ currentItem: item }, () => {
+		setCurrentItem(item);
+		setMode('application-view');
+	});
 };
 
 
 class ApplicationsList extends Component {
-
-	constructor(props, context){
-		super(props, context);
-		this.state = {
-		};
-	}
-
 
 	componentDidMount() {
 		takenApplications(this.props.token).then(data => setTakenRequests(data.data));
@@ -43,12 +38,18 @@ class ApplicationsList extends Component {
 				{takenRequests.map(r =>
 					<div className="app-item">
 						<div className="app-item__head">
-							<div className="app-item__head-city">USA, 4 cities</div>
+							<div className="app-item__head-city">{r.country}, {r.cities} cities</div>
 							<div className="app-item__head-date">{moment(r.created).format('DD/MM/YYYY')}</div>
 						</div>
 						<div className="app-item__body">
 							<div className="app-item__body-head">{r.title}</div>
-							<div className="app-item__body-time">24:45</div>
+							<Countdown
+								date={moment(r.expires)}
+								renderer={({ days, hours, minutes }) => {
+									hours = ((parseInt(days) || 0) * 24) + (parseInt(hours) || 0);
+									return (<div className="app-item__body-time">{hours}:{minutes}</div>);
+								}}
+							/>
 							<button className="app-item__body-send-signal" onClick={() => handleSelectItem(r)}>Send signal</button>
 						</div>
 					</div>

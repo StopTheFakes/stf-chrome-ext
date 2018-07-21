@@ -4,8 +4,6 @@ import { setToken } from './Auth';
 
 const BASE_URL = 'http://stf.glissmedia.ru/api/v1/';
 
-/* global fetch */
-
 const process = resp => {
 	if (resp.status === 401) {
 		setToken(null);
@@ -29,14 +27,14 @@ const post = (url, data = {}, params = {}, token = null, method = 'POST') => {
 	let formData = new FormData();
 	let append = (name, val) => {
 		formData.append(name, val);
-		if (val instanceof File) {
+		if (val instanceof File || val instanceof Blob) {
 			file = true;
 		}
 	};
 	Object.keys(data).forEach(key => {
 		if (data[key] instanceof Array) {
-			data[key].forEach(val => {
-				append(key + '[]', val);
+			data[key].forEach((val, i) => {
+				append(`${key}[${i}]`, val);
 			});
 		} else {
 			append(key, data[key]);
@@ -54,6 +52,6 @@ const post = (url, data = {}, params = {}, token = null, method = 'POST') => {
 };
 
 export const login = (email, password) => post('login', {email, password});
-export const takenApplications = token => get('request/taken', null, token);
+export const takenApplications = token => get('request/taken/full', null, token);
 export const application = (id, token) => get(`request/${id}/taken`, null, token);
 export const sendSignal = (id, data, token) => post(`request/${id}`, data, {}, token);

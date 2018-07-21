@@ -15,6 +15,7 @@ chrome.commands.onCommand.addListener(command => {
 			}
 			chrome.tabs.query({active: true, currentWindow: true}, tabs => {
 				chrome.tabs.sendMessage(tabs[0].id, {
+					command,
 					makeScreenshot: !!item,
 					error: item ? null : 'Choose request first',
 					success: item ? `Screenshot captured for request "${item.title}"` : null

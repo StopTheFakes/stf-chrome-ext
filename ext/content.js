@@ -13,16 +13,21 @@
 		'<div class="stf-ext-screenshot-status__message"></div>';
 
 	chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-		clearTimeout(wrapperTimer);
-		document.body.appendChild(wrapper);
-		wrapper.classList.remove('success', 'error');
-		wrapper.classList.add(request.error ? 'error' : 'success');
-		wrapper.querySelector('.stf-ext-screenshot-status__message').innerHTML = request.error || request.success;
-		wrapperTimer = setTimeout(() => wrapper.remove(), 5000);
-		/*console.log(sender.tab ?
-			"from a content script:" + sender.tab.url :
-			"from the extension");
-		if (request.greeting == "hello")
-			sendResponse({farewell: "goodbye"});*/
+		if (request.command === 'make-screenshot') {
+			clearTimeout(wrapperTimer);
+			document.body.appendChild(wrapper);
+			wrapper.classList.remove('success', 'error');
+			wrapper.classList.add(request.error ? 'error' : 'success');
+			wrapper.querySelector('.stf-ext-screenshot-status__message').innerHTML = request.error || request.success;
+			wrapperTimer = setTimeout(() => wrapper.remove(), 5000);
+		}
+		if (request.command === 'request-geo') {
+			navigator.geolocation
+				.getCurrentPosition(
+					pos => sendResponse({ coords: { latitude: pos.coords.latitude, longitude: pos.coords.longitude } }),
+					err => sendResponse({ error: true, message: err.message })
+				);
+			return true;
+		}
 	});
 })();

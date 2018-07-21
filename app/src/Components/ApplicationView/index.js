@@ -13,11 +13,21 @@ import { setMode, setCurrentItem } from 'Services/Store';
 import './index.styl';
 
 
-const handleBack = () => {
-	setMode('applications-list');
-	setCurrentItem(null);
-	chrome.storage.local.set({ currentItem: null });
+const handleBack = fn => {
+	chrome.storage.local.set({ currentItem: null }, () => {
+		fn && fn();
+		setCurrentItem(null);
+		setMode('applications-list');
+	});
 };
+
+const urltoFile = (url, filename, mimeType) => {
+	mimeType = mimeType || (url.match(/^data:([^;]+);/)||'')[1];
+	return fetch(url)
+			.then(res => res.arrayBuffer())
+			.then(buf => new File([ buf ], filename, { type: mimeType }));
+};
+
 
 class ApplicationView extends Component {
 
@@ -48,10 +58,12 @@ class ApplicationView extends Component {
 
 	reloadScreenshots() {
 		let { item } = this.props;
-		chrome.storage.local.get(['screenshots'], result => {
-			let { screenshots = {} } = result;
-			this.setState({ screenshots: (screenshots[item.id] || []).filter(i => !!i) });
-		});
+		if (item) {
+			chrome.storage.local.get(['screenshots'], result => {
+				let { screenshots = {} } = result;
+				this.setState({ screenshots: (screenshots[item.id] || []).filter(i => !!i) });
+			});
+		}
 	}
 
 
@@ -97,21 +109,52 @@ class ApplicationView extends Component {
 
 
 	sendSignal() {
-		let { token } = this.props;
-		let { item, screenshots, minScreenshots } = this.state;
-		if (screenshots.length >= minScreenshots) {
+		let { token, item } = this.props;
+		let { screenshots, offenderEmail, offenderEmailSrc, information } = this.state;
+		if (information.length >= 30) {
 			let data = {
-				description: null,
-				url: null,
-				email: null,
-				email_title: null,
-				address: null,
-				image: screenshots.map(i => ({img: i.img, desc: i.desc})),
-				video: null,
-				status: null
+				url: '',
+				information,
+				offenderEmail,
+				offenderEmailSrc,
+				offenderUrl: '',
+				location: '',
+				screenshots: []
 			};
-			sendSignal(item.id, data, token)
-				.then(data => console.log(data));
+			(new Promise(res => {
+				chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+					res(tabs[0].url);
+				});
+			}))
+				.then(url => {
+					data.url = url;
+					return Promise.all(screenshots.map((s, i) => urltoFile(s.img, `screen-${i}.png`)));
+				})
+				.then(list => {
+					list.forEach(f => data.screenshots.push(f));
+					return sendSignal(item.claim_id, data, token);
+					/*return (new Promise(res => {
+						chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+							chrome.tabs.sendMessage(tabs[0].id, { command: 'request-geo' }, response => {
+								if (response && response.coords) {
+									data.location = response.coords.latitude + ',' + response.coords.longitude;
+								}
+								res();
+							});
+						});
+					}));*/
+				})
+				//.then(() => sendSignal(item.claim_id, data, token))
+				.then(data => {
+					if (data && data.success) {
+						chrome.storage.local.get(['screenshots'], result => {
+							let { screenshots = {} } = result;
+							delete screenshots[item.id];
+							chrome.storage.local.set({ screenshots });
+							handleBack(() => this.setState({isSendSignal: false}));
+						});
+					}
+				});
 		}
 	}
 
@@ -175,6 +218,7 @@ class ApplicationView extends Component {
 							</div>
 							<button
 								className={`send-signal__send-button ${information.length >= 30 ? 'active' : ''}`}
+								onClick={this.sendSignal.bind(this)}
 							>Send signal</button>
 						</div>
 					</div>

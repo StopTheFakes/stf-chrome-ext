@@ -31,7 +31,6 @@ class App extends Component {
 		if (!token) {
 			return <LoginComponent />;
 		}
-		console.log(mode);
 		switch (mode) {
 			case 'application-view': return <ApplicationViewComponent />;
 			case 'applications-list': return <ApplicationsListComponent />;
