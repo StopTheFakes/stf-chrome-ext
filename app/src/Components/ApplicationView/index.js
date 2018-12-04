@@ -36,7 +36,7 @@ class ApplicationView extends Component {
 		this.state = {
 			screenshots: [],
 			currentScreenshot: null,
-			minScreenshots: 5,
+			minScreenshots: 3,
 			maxScreenshots: 5,
 			isSendSignal: false,
 			offenderEmail: '',

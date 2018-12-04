@@ -2,7 +2,7 @@ import * as qs from 'query-string';
 
 import { setToken } from './Auth';
 
-const BASE_URL = 'http://stf.glissmedia.ru/api/v1/';
+const BASE_URL = 'https://stopthefakes.co/api/v1/';
 
 const process = resp => {
 	if (resp.status === 401) {

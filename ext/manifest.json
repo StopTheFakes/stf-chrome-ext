@@ -1,7 +1,8 @@
 {
 	"name": "STF",
-	"version": "0.3.0",
+	"version": "0.3.4",
 	"description": "STF extension",
+	"author": "StopTheFakes Ltd.",
 	"permissions": [
 		"tabs",
 		"<all_urls>",

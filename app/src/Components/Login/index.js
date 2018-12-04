@@ -83,9 +83,9 @@ class Login extends Component {
 				</div>
 				<button className="login__button" onClick={this.handleLogin.bind(this)}>Sign in</button>
 				<div className="login__links">
-					<a href="http://stf.glissmedia.ru/" onClick={openLink}>Register</a>
+					<a href="https://stopthefakes.co/" onClick={openLink}>Register</a>
 					<span> / </span>
-					<a href="http://stf.glissmedia.ru/" onClick={openLink}>Remember password</a>
+					<a href="https://stopthefakes.co/" onClick={openLink}>Remember password</a>
 				</div>
 			</div>
 		);
